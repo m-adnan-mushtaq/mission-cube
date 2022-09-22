@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+
+import "./container/css/bootstrap.min.css"
+import "./container/css/style.css"
+
+import UiToast from "components/ui/Toast";
+import AnimatedRoutes from "components/AnimatedRoutes";
+
+import { useDispatch, useSelector } from "react-redux";
+import { authenticationCheckerHelper } from "store";
+import { useEffect } from "react";
+import Spinner from "components/ui/Spinner";
+import ErrorMsg from "components/ErrorMsg";
+import ErrorBoundary from "components/ErrorBoundary";
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const dispatch=useDispatch()
+    const {trackerError,trackerLoading}=useSelector(state=>state.auth)
+    useEffect(()=>{
+        dispatch(authenticationCheckerHelper())
+    },[dispatch])
+    
+    if(trackerLoading){
+        return <Spinner/>
+    }
+    if(trackerError){
+        return <ErrorMsg msg={trackerError} />
+    }
+    return (
+        <>
+            <ErrorBoundary>
+                <UiToast />
+                <AnimatedRoutes />
+            </ErrorBoundary>
+        </>
+    );
 }
 
 export default App;
